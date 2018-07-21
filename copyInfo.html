@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Hello World...</title>
+        <script src="./scripts/angular.js"></script>
+        <link rel="stylesheet" type="text/css" href="./styles/copyInfo.css" />
+    </head>
+    <body class="container-body" ng-app="applicationModule" ng-controller="appController">
+        <b>Copy Values:</b><br><br>
+        <div ng-repeat="values in copyValuesArray">
+            <label>{{values.keyId}}:</label>
+            <label style="padding-left: 10px">{{values.copyMessage}}</label><br><br>
+        </div>
+    </body>
+
+    <script src="./scripts/copyInfo.js"></script>
+</html>

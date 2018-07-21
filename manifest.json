@@ -1,11 +1,11 @@
 {
     "manifest_version": 2,
-    "name": "Hello World",
-    "description": "Sample Extension",
+    "name": "Multi Copy",
+    "description": "Extension shall provide user with the Capability to Copy and Paste Multiple Items",
     "version": "1.0",
 
     "browser_action": {
         "default_icon": "conversation.png",
-        "default_popup": "helloWorld.html"
+        "default_popup": "copyInfo.html"
     }
 }
