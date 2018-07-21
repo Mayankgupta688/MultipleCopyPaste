@@ -7,5 +7,14 @@
     "browser_action": {
         "default_icon": "conversation.png",
         "default_popup": "copyInfo.html"
+    },
+
+    "options_page": "settings.html",
+
+    "permissions": ["storage", "notifications"],
+
+    "background": {
+        "persistent": false,
+        "scripts": ["./scripts/eventPage.js"]
     }
 }
