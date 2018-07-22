@@ -18,6 +18,27 @@
             $scope.$apply();
         });
 
+        $scope.deleteEntry = function(index) {
+            chrome.storage.sync.get("copyStringArrayData", function(item) {
+                var cachedItem = item.copyStringArrayData;
+
+                cachedItem[+(index)].copyMessage = "";
+
+                chrome.storage.sync.set( {"copyStringArrayData": cachedItem });
+            });
+        }
+
+        $scope.updateEntry = function(index, event) {
+            debugger;
+            chrome.storage.sync.get("copyStringArrayData", function(item) {
+                var cachedItem = item.copyStringArrayData;
+
+                cachedItem[+(index)].copyMessage = event.target.parentElement.firstElementChild.innerText;
+
+                chrome.storage.sync.set( {"copyStringArrayData": cachedItem });
+            });
+        }
+
         $scope.addToStorage = function() {
             $scope.copyStringArrayData.push({
                 keyId: $scope.copyStringArrayData.length,
@@ -51,13 +72,6 @@
         chrome.storage.sync.get("name", function(item) {
             $scope.name = item.name;
             $scope.$apply();
-
-            chrome.notifications.create("info", {
-                type: "basic",
-                title: "Hello All",
-                message: "Hello Mayank. Welcome to the Demo on the Chrome Extension...",
-                iconUrl: "../conversation.png"
-            })
         });
     });
 })();    

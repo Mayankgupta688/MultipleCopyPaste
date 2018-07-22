@@ -37,6 +37,17 @@ function InitializeCacheObject() {
 function getCacheFromStorage() {
     chrome.storage.sync.get("copyStringArrayData", function(item) {
         var length = item.copyStringArrayData.length.toString();
+
+        var itemCount = 0;
+
+        item.copyStringArrayData.forEach(function(element) {
+            if(element.copyMessage.length) {
+                itemCount += 1;
+            }
+        });
+
+        chrome.browserAction.setBadgeText({"text": itemCount.toString()});
+
         if(!item.copyStringArrayData || item.copyStringArrayData.length != 10) {
             var copyItem = InitializeCacheObject();
             chrome.storage.sync.set({"copyStringArrayData": copyItem });
@@ -44,47 +55,45 @@ function getCacheFromStorage() {
     });
 }
 
+function copyToSelectedIndex(index) {
+
+    var index = index
+    return function(selectionData) {
+        debugger;
+        chrome.storage.sync.get("copyStringArrayData", function(item) {
+            item.copyStringArrayData[(+index)].copyMessage = selectionData.selectionText;
+
+            var itemCount = 0;
+
+            item.copyStringArrayData.forEach(function(element) {
+                if(element.copyMessage.length) {
+                    itemCount += 1;
+                }
+            });
+
+            chrome.browserAction.setBadgeText({"text": itemCount.toString()});
+            
+            chrome.storage.sync.set({"copyStringArrayData": item.copyStringArrayData });
+        });
+    }
+}
+
 
 function addContextMenu() {
-    var contextMenu = {
-        "id": "addSelection",
-        "title": "Add to Copy String",
-        "contexts": ["selection"]
-    }
-    
-    chrome.contextMenus.create(contextMenu);
 
-    chrome.contextMenus.onClicked.addListener(function(selectionData) {
-        if(selectionData.menuItemId = "addSelection") {
-            chrome.storage.sync.get("copyStringArrayData", function(item) {
-                
-                var copyItems = item.copyStringArrayData;
-    
-                copyItems.push({
-                    keyId: copyItems.length,
-                    copyMessage: selectionData.selectionText
-                });
-    
-                var length = copyItems.length.toString();
-
-                let itemCount = 0;
-
-                copyItems.forEach(function(element) {
-                    if(element.copyMessage.length) {
-                        itemCount += 1;
-                    }
-                });
-
-                chrome.browserAction.setBadgeText({"text": itemCount.toString()});
-    
-                chrome.storage.sync.set( {"copyStringArrayData": copyItems });
-            });
-        }
+    var parentCopyMenu = chrome.contextMenus.create({
+        id: "parentCopyMenu",
+        title: "Add to Copy String",
+        contexts: ["selection"]
     });
+
+    for(let i=0; i< 10; i++) {
+        chrome.contextMenus.create({title: "Copy Data to " + i, parentId: "parentCopyMenu", contexts: ["selection"], "onclick": copyToSelectedIndex(i)});
+    }
 }
 
 function subscribeToContextMessages() {
-    chrome.runtime.onMessage.addListener(function(request) { 
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) { 
         if(request.operation && request.operation == "addToCache") {
             if(request.selectedText.length > 0) {
     
@@ -111,12 +120,16 @@ function subscribeToContextMessages() {
                 });
             }
         }
+
+        else if(request.operation == "retrieveFromCache") {
+            chrome.storage.sync.get("copyStringArrayData", function(item) {
+                sendResponse({data: item.copyStringArrayData[+(request.selectedKey)].copyMessage.toString()})
+            });
+
+            return true;
+        }
     });
 }
-
-
-
-
 
 function initializeExtension() {
     getCacheFromStorage();

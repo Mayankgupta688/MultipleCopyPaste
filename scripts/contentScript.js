@@ -10,20 +10,19 @@ function getSelectionText(){
 }
 
 function checkIfEditable() {
-    return event.target.isContentEditable || !event.target.readOnly
+    debugger;
+    return event.target.isContentEditable || !event.target.readOnly || event.target.tagName.toLowerCase() == "input";
 }
 
 setTimeout(() => {
     $("body").keydown(function(event) {
         
         var validkeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
-        if(event.altKey === true && validkeys.indexOf(event.key) >= 0) {
+        if(event.altKey === true && validkeys.indexOf(event.key) >= 0 && event.ctrlKey === false ) {
 
             if(!window.getSelectionText().length) {
                 return;
             }
-
-            alert(event.key + ": " + window.getSelectionText())
 
             chrome.runtime.sendMessage({ 
                 operation: "addToCache", 
@@ -34,10 +33,23 @@ setTimeout(() => {
     });
 
     $("body").keydown(function(event) {
+        
         var validkeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
-        if(event.shiftKey === true && event.altKey === true && validkeys.indexOf(event.key) >= 0) {
-            if(checkIfEditable()) {
-                alert("Hi");
+        if(event.ctrlKey === true && event.altKey === true) {
+            if(validkeys.indexOf(event.key) >= 0) {
+                if(checkIfEditable()) {
+                    chrome.runtime.sendMessage({
+                        operation: "retrieveFromCache",
+                        selectedKey: event.key
+                    }, function(response) {
+                        debugger;
+                        if(event.target.tagName.toLowerCase() == "div") {
+                            event.target.innerText = response.data;
+                        } else if (event.target.tagName.toLowerCase() == "input") {
+                            event.target.value = response.data;
+                        }
+                    })
+                }
             }
         }
     });
