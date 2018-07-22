@@ -11,14 +11,16 @@
         <b>Copied Values:</b><br><br>
         <label>Hello {{name}}</label><br><br>
 
-        <div ng-repeat="values in copyStringArray">
-            <label>{{values.keyId}}:</label>
-            <label style="padding-left: 10px">{{values.copyMessage}}</label><br><br>
+        <div ng-repeat="values in copyStringArrayData">
+            <label>{{values.keyId}} :</label>
+            <label> {{values.copyMessage}}</label><br><br>
         </div><br><br>
 
         <input type="button" ng-click="resetStorage()" value="Reset Storage" />
         
         <input type="button" ng-click="addToStorage()" value="Click To Add To Storage" />
+
+        <input type="button" value="Click to Get Selection" ng-click="getSelection()" />
 
     </body>
 

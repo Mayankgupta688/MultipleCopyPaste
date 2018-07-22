@@ -6,15 +6,21 @@
 
     "browser_action": {
         "default_icon": "conversation.png",
-        "default_popup": "copyInfo.html"
+        "default_popup": "copyInfo.html",
+        "default_title": "Multiple Copy Paste"
     },
 
     "options_page": "settings.html",
 
-    "permissions": ["storage", "notifications"],
+    "permissions": ["storage", "notifications", "contextMenus", "http://*/*", "https://*/*"],
+
+    "content_scripts": [{
+        "matches": ["http://*/*", "https://*/*"],
+        "js": ["./scripts/contentScript.js", "./scripts/jquery.js"]
+    }],
 
     "background": {
-        "persistent": false,
+        "persistent": true,
         "scripts": ["./scripts/eventPage.js"]
     }
 }
