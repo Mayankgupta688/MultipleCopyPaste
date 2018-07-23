@@ -15,6 +15,12 @@ function checkIfEditable() {
 }
 
 setTimeout(() => {
+
+    var data = $("iframe");
+
+    alert(data.count)
+
+
     $("body").keydown(function(event) {
         
         var validkeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
@@ -37,6 +43,7 @@ setTimeout(() => {
         var validkeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
         if(event.ctrlKey === true && event.altKey === true) {
             if(validkeys.indexOf(event.key) >= 0) {
+                debugger;
                 if(checkIfEditable()) {
                     chrome.runtime.sendMessage({
                         operation: "retrieveFromCache",
@@ -47,6 +54,11 @@ setTimeout(() => {
                             event.target.innerText = response.data;
                         } else if (event.target.tagName.toLowerCase() == "input") {
                             event.target.value = response.data;
+                        } else if (event.target.tagName.toLowerCase() == "textarea") {
+                            event.target.value = response.data;
+                            event.target.innerText = response.data;
+                        } else if(event.target.isContentEditable) {
+                            event.target.innerText = response.data;
                         }
                     })
                 }

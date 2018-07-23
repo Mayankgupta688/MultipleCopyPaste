@@ -36,21 +36,26 @@ function InitializeCacheObject() {
 
 function getCacheFromStorage() {
     chrome.storage.sync.get("copyStringArrayData", function(item) {
-        var length = item.copyStringArrayData.length.toString();
 
         var itemCount = 0;
 
-        item.copyStringArrayData.forEach(function(element) {
-            if(element.copyMessage.length) {
-                itemCount += 1;
-            }
-        });
+        if(item.copyStringArrayData) {
+            var length = item.copyStringArrayData.length.toString();
+
+            item.copyStringArrayData.forEach(function(element) {
+                if(element.copyMessage.length) {
+                    itemCount += 1;
+                }
+            });
+        }
 
         chrome.browserAction.setBadgeText({"text": itemCount.toString()});
 
         if(!item.copyStringArrayData || item.copyStringArrayData.length != 10) {
             var copyItem = InitializeCacheObject();
+            addContextMenu();
             chrome.storage.sync.set({"copyStringArrayData": copyItem });
+            return;
         }
     });
 }
@@ -98,19 +103,22 @@ function subscribeToContextMessages() {
     
                 chrome.storage.sync.get("copyStringArrayData", function(item) {
 
-                    if(item.copyStringArrayData.length != 10) {
-                        item.copyStringArrayData = InitializeCacheObject();
-                    }
-                    
-                    item.copyStringArrayData[(+request.selectedKey)].copyMessage = request.selectedText;
-
                     let itemCount = 0;
 
-                    item.copyStringArrayData.forEach(function(element) {
-                        if(element.copyMessage.length) {
-                            itemCount += 1;
+                    if(item.copyStringArrayData) {
+
+                        if(item.copyStringArrayData.length != 10) {
+                            item.copyStringArrayData = InitializeCacheObject();
                         }
-                    });
+                        
+                        item.copyStringArrayData[(+request.selectedKey)].copyMessage = request.selectedText;
+
+                        item.copyStringArrayData.forEach(function(element) {
+                            if(element.copyMessage.length) {
+                                itemCount += 1;
+                            }
+                        });
+                    }
     
                     chrome.browserAction.setBadgeText({"text": itemCount.toString()});
     
@@ -133,7 +141,6 @@ function subscribeToContextMessages() {
 function initializeExtension() {
     getCacheFromStorage();
     registerForCacheChange();
-    addContextMenu();
     subscribeToContextMessages();
 }
 
