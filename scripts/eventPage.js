@@ -59,7 +59,6 @@ function copyToSelectedIndex(index) {
 
     var index = index
     return function(selectionData) {
-        debugger;
         chrome.storage.sync.get("copyStringArrayData", function(item) {
             item.copyStringArrayData[(+index)].copyMessage = selectionData.selectionText;
 
