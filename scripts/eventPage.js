@@ -53,7 +53,6 @@ function getCacheFromStorage() {
 
         if(!item.copyStringArrayData || item.copyStringArrayData.length != 10) {
             var copyItem = InitializeCacheObject();
-            addContextMenu();
             chrome.storage.sync.set({"copyStringArrayData": copyItem });
             return;
         }
@@ -79,20 +78,6 @@ function copyToSelectedIndex(index) {
             
             chrome.storage.sync.set({"copyStringArrayData": item.copyStringArrayData });
         });
-    }
-}
-
-
-function addContextMenu() {
-
-    var parentCopyMenu = chrome.contextMenus.create({
-        id: "parentCopyMenu",
-        title: "Add to Copy String",
-        contexts: ["selection"]
-    });
-
-    for(let i=0; i< 10; i++) {
-        chrome.contextMenus.create({title: "Copy Data to " + i, parentId: "parentCopyMenu", contexts: ["selection"], "onclick": copyToSelectedIndex(i)});
     }
 }
 
